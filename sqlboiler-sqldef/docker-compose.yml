@@ -1,0 +1,12 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:10-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data
+    ports:
+      - ${DB_PORT}:5432
