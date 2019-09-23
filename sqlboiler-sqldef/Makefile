@@ -47,9 +47,8 @@ DB_WAIT_FOR := wait-for --port=$(DB_PORT) --user=$(DB_USER) --password=$(DB_PASS
 ifndef DB_PGSQLMODE
 DB_PGSQLMODE := disable
 endif
-#SQLDEF := PGSSLMODE=$(DB_PGSQLMODE) psqldef --port=$(DB_PORT) --user=$(DB_USER) --password=$(DB_PASS)
-SQLDEF := PGSSLMODE=$(DB_PGSQLMODE) /Users/kei.arima/repos/github.com/kei2100/sqldef/psqldef --port=$(DB_PORT) --user=$(DB_USER) --password=$(DB_PASS)
-SQLDEF_SCHEMA_FILE := ./postgres/scripts/schema.sql
+SQLDEF := PGSSLMODE=$(DB_PGSQLMODE) psqldef --port=$(DB_PORT) --user=$(DB_USER) --password=$(DB_PASS)
+SQLDEF_SCHEMA_FILE := ./postgres/schema.sql
 SQLDEF_DRYRUN_FILE := ./postgres/tmp/dryrun.sql
 
 CREATE_DATABASE_CMD := $(DB_CLI) -d postgres -c "CREATE DATABASE $(DB_NAME) ENCODING 'UTF8' LC_CTYPE 'C' LC_COLLATE 'C' TEMPLATE 'template0'"
@@ -73,19 +72,14 @@ db.stop:
 .PHONY: db.restart
 db.restart: db.stop db.start
 
-.PHONY: db.schema.export
-db.schema.export: db.start
-	$(SQLDEF) $(DB_NAME) --export > $(SQLDEF_SCHEMA_FILE)
-	$(CAT) $(SQLDEF_SCHEMA_FILE)
+.PHONY: db.schema.migrate
+db.schema.migrate: db.start
+	$(SQLDEF) $(DB_NAME) --file=$(SQLDEF_SCHEMA_FILE)
 
 .PHONY: db.schema.migrate.dryrun
 db.schema.migrate.dryrun: db.start
 	$(SQLDEF) $(DB_NAME) --file=$(SQLDEF_SCHEMA_FILE) --dry-run > $(SQLDEF_DRYRUN_FILE)
 	$(CAT) $(SQLDEF_DRYRUN_FILE)
-
-.PHONY: db.schema.migrate
-db.schema.migrate: db.start
-	$(SQLDEF) $(DB_NAME) --file=$(SQLDEF_SCHEMA_FILE)
 
 .PHONY: db.cli
 db.cli: db.start
