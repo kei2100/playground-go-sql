@@ -9,9 +9,10 @@ endif
 setup:
 	go get -u golang.org/x/tools/cmd/goimports
 	go get -u golang.org/x/lint/golint
-	go get -u github.com/jwilder/dockerize
 	go get github.com/ArcanjoQueiroz/wait-for@b8061231466559274f181d59664051a3b46ad64a
 	go get github.com/k0kubun/sqldef/cmd/psqldef@v0.5.3
+	go get github.com/volatiletech/sqlboiler@v3.5.0
+	go get github.com/volatiletech/sqlboiler/drivers/sqlboiler-psql@v3.5.0
 	go mod tidy
 
 #
@@ -84,3 +85,14 @@ db.schema.migrate.dryrun: db.start
 .PHONY: db.cli
 db.cli: db.start
 	$(DB_DOCKER_COMPOSE) exec $(DB) $(DB_CLI)
+
+#
+# app
+#
+APP_DB_DRIVER := psql
+APP_ENTITY_PKG := entity
+APP_ENTITY_DIR := app/infra/db/$(APP_ENTITY_PKG)
+
+.PHONY: app.entity.gen
+app.entity.gen: db.start
+	sqlboiler $(APP_DB_DRIVER) -p $(APP_ENTITY_PKG) -o $(APP_ENTITY_DIR)
