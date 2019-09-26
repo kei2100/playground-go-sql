@@ -2,7 +2,7 @@ package model
 
 // Account model
 type Account struct {
-	ID string
+	ID        string
 	AccountID string
 	timestamp
 }
@@ -11,6 +11,6 @@ type Account struct {
 func (a *Account) NewPost(body string) *Post {
 	return &Post{
 		AuthorID: a.ID,
-		Body: body,
+		Body:     body,
 	}
 }

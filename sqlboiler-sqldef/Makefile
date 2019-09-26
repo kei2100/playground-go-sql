@@ -10,7 +10,7 @@ setup:
 	go get -u golang.org/x/tools/cmd/goimports
 	go get -u golang.org/x/lint/golint
 	go get github.com/ArcanjoQueiroz/wait-for@b8061231466559274f181d59664051a3b46ad64a
-	go get github.com/k0kubun/sqldef/cmd/psqldef@v0.5.5
+	go get github.com/k0kubun/sqldef/cmd/psqldef@v0.5.6
 	go get github.com/volatiletech/sqlboiler@v3.5.0
 	go get github.com/volatiletech/sqlboiler/drivers/sqlboiler-psql@v3.5.0
 	go mod tidy

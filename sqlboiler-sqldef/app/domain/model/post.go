@@ -2,8 +2,8 @@ package model
 
 // Post model
 type Post struct {
-	ID string
+	ID       string
 	AuthorID string
-	Body string
+	Body     string
 	timestamp
 }
