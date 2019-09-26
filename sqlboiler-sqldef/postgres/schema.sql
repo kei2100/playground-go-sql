@@ -1,6 +1,6 @@
 CREATE TABLE public.accounts (
     id VARCHAR(36) NOT NULL PRIMARY KEY,
-    account_id VARCHAR(36) NOT NULL,
+    account_id VARCHAR(36) NOT NULL, -- foo bar baz
     created_at TIMESTAMP WITH TIME ZONE NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL
 );
