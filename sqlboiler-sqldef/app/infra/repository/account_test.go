@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/kei2100/playground-go-sql/sqlboiler-sqldef/app/domain/model"
@@ -31,7 +32,9 @@ func TestAccount_FindByAccountID(t *testing.T) {
 		t.Errorf("AccountID got %v, want %v", g, w)
 	}
 
-	if err := repo.FindByAccountID(ctx, &got, "not found"); !repository.IsNotFound(err) {
+	err := repo.FindByAccountID(ctx, &got, "not found")
+	if !repository.IsNotFound(err) {
 		t.Errorf("err got %v, want not found error", err)
 	}
+	fmt.Printf("%+v", err)
 }

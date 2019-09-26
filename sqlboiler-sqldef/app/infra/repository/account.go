@@ -18,6 +18,9 @@ func (repo *Account) FindByAccountID(ctx context.Context, account *model.Account
 		entity.AccountWhere.AccountID.EQ(accountID),
 	).One(ctx, repo.db)
 	if err != nil {
+		if isSQLErrNoRows(err) {
+			return errNotFound(err)
+		}
 		return err
 	}
 	mapAccount(ent, account)
