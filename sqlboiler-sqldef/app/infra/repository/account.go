@@ -20,7 +20,13 @@ func (repo *Account) FindByAccountID(ctx context.Context, account *model.Account
 	if err != nil {
 		return err
 	}
-	account.ID = ent.ID
-	account.AccountID = ent.AccountID
+	mapAccount(ent, account)
 	return nil
+}
+
+func mapAccount(e *entity.Account, m *model.Account) {
+	m.ID = e.ID
+	m.AccountID = e.AccountID
+	m.CreatedAt = e.CreatedAt
+	m.UpdatedAt = e.UpdatedAt
 }

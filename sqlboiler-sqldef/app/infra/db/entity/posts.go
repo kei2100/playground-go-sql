@@ -23,34 +23,44 @@ import (
 
 // Post is an object representing the database table.
 type Post struct {
-	ID       string `boil:"id" json:"id" toml:"id" yaml:"id"`
-	AuthorID string `boil:"author_id" json:"author_id" toml:"author_id" yaml:"author_id"`
-	Body     string `boil:"body" json:"body" toml:"body" yaml:"body"`
+	ID        string    `boil:"id" json:"id" toml:"id" yaml:"id"`
+	AuthorID  string    `boil:"author_id" json:"author_id" toml:"author_id" yaml:"author_id"`
+	Body      string    `boil:"body" json:"body" toml:"body" yaml:"body"`
+	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	UpdatedAt time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 
 	R *postR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L postL  `boil:"-" json:"-" toml:"-" yaml:"-"`
 }
 
 var PostColumns = struct {
-	ID       string
-	AuthorID string
-	Body     string
+	ID        string
+	AuthorID  string
+	Body      string
+	CreatedAt string
+	UpdatedAt string
 }{
-	ID:       "id",
-	AuthorID: "author_id",
-	Body:     "body",
+	ID:        "id",
+	AuthorID:  "author_id",
+	Body:      "body",
+	CreatedAt: "created_at",
+	UpdatedAt: "updated_at",
 }
 
 // Generated where
 
 var PostWhere = struct {
-	ID       whereHelperstring
-	AuthorID whereHelperstring
-	Body     whereHelperstring
+	ID        whereHelperstring
+	AuthorID  whereHelperstring
+	Body      whereHelperstring
+	CreatedAt whereHelpertime_Time
+	UpdatedAt whereHelpertime_Time
 }{
-	ID:       whereHelperstring{field: "\"posts\".\"id\""},
-	AuthorID: whereHelperstring{field: "\"posts\".\"author_id\""},
-	Body:     whereHelperstring{field: "\"posts\".\"body\""},
+	ID:        whereHelperstring{field: "\"posts\".\"id\""},
+	AuthorID:  whereHelperstring{field: "\"posts\".\"author_id\""},
+	Body:      whereHelperstring{field: "\"posts\".\"body\""},
+	CreatedAt: whereHelpertime_Time{field: "\"posts\".\"created_at\""},
+	UpdatedAt: whereHelpertime_Time{field: "\"posts\".\"updated_at\""},
 }
 
 // PostRels is where relationship names are stored.
@@ -77,8 +87,8 @@ func (*postR) NewStruct() *postR {
 type postL struct{}
 
 var (
-	postAllColumns            = []string{"id", "author_id", "body"}
-	postColumnsWithoutDefault = []string{"id", "author_id", "body"}
+	postAllColumns            = []string{"id", "author_id", "body", "created_at", "updated_at"}
+	postColumnsWithoutDefault = []string{"id", "author_id", "body", "created_at", "updated_at"}
 	postColumnsWithDefault    = []string{}
 	postPrimaryKeyColumns     = []string{"id"}
 )
@@ -729,6 +739,16 @@ func (o *Post) Insert(ctx context.Context, exec boil.ContextExecutor, columns bo
 	}
 
 	var err error
+	if !boil.TimestampsAreSkipped(ctx) {
+		currTime := time.Now().In(boil.GetLocation())
+
+		if o.CreatedAt.IsZero() {
+			o.CreatedAt = currTime
+		}
+		if o.UpdatedAt.IsZero() {
+			o.UpdatedAt = currTime
+		}
+	}
 
 	if err := o.doBeforeInsertHooks(ctx, exec); err != nil {
 		return err
@@ -803,6 +823,12 @@ func (o *Post) Insert(ctx context.Context, exec boil.ContextExecutor, columns bo
 // See boil.Columns.UpdateColumnSet documentation to understand column list inference for updates.
 // Update does not automatically update the record in case of default values. Use .Reload() to refresh the records.
 func (o *Post) Update(ctx context.Context, exec boil.ContextExecutor, columns boil.Columns) (int64, error) {
+	if !boil.TimestampsAreSkipped(ctx) {
+		currTime := time.Now().In(boil.GetLocation())
+
+		o.UpdatedAt = currTime
+	}
+
 	var err error
 	if err = o.doBeforeUpdateHooks(ctx, exec); err != nil {
 		return 0, err
@@ -932,6 +958,14 @@ func (o PostSlice) UpdateAll(ctx context.Context, exec boil.ContextExecutor, col
 func (o *Post) Upsert(ctx context.Context, exec boil.ContextExecutor, updateOnConflict bool, conflictColumns []string, updateColumns, insertColumns boil.Columns) error {
 	if o == nil {
 		return errors.New("entity: no posts provided for upsert")
+	}
+	if !boil.TimestampsAreSkipped(ctx) {
+		currTime := time.Now().In(boil.GetLocation())
+
+		if o.CreatedAt.IsZero() {
+			o.CreatedAt = currTime
+		}
+		o.UpdatedAt = currTime
 	}
 
 	if err := o.doBeforeUpsertHooks(ctx, exec); err != nil {

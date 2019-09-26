@@ -785,7 +785,7 @@ func testRelationshipsSelect(t *testing.T) {
 }
 
 var (
-	relationshipDBTypes = map[string]string{`ID`: `character varying`, `FollowerID`: `character varying`, `FolloweeID`: `character varying`}
+	relationshipDBTypes = map[string]string{`ID`: `character varying`, `FollowerID`: `character varying`, `FolloweeID`: `character varying`, `CreatedAt`: `timestamp with time zone`, `UpdatedAt`: `timestamp with time zone`}
 	_                   = bytes.MinRead
 )
 

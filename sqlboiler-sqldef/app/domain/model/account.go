@@ -4,6 +4,7 @@ package model
 type Account struct {
 	ID string
 	AccountID string
+	timestamp
 }
 
 // NewPost creates a new Post

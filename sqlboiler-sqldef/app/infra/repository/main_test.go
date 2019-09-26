@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"log"
 	"os"
 	"sync"
 	"testing"
@@ -16,15 +15,20 @@ import (
 var db *sql.DB
 
 func TestMain(t *testing.M) {
-	disposeDB := setupDB()
-
-	cleaner := setupCleaner()
-
-	status := t.Run()
-	cleaner()
-	disposeDB()
+	status := run(t)
 	os.Exit(status)
 }
+
+func run(t *testing.M) int {
+	disposeDB := setupDB()
+	defer disposeDB()
+
+	cleanUp := setupCleaner()
+	defer cleanUp()
+
+	return t.Run()
+}
+
 
 func setupDB() func() {
 	var err error
@@ -52,9 +56,6 @@ func setupCleaner() func() {
 	return func() {
 		mu.Lock()
 		defer mu.Unlock()
-
-		log.Println("--------------------------------")
-		log.Println(accountIDs)
 		entity.Accounts(entity.AccountWhere.ID.IN(accountIDs)).DeleteAll(ctx, db)
 	}
 }

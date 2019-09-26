@@ -7,5 +7,5 @@ import (
 
 // Account repository interface
 type Account interface {
-	FindByAccountID(ctx context.Context, accountID string, account *model.Account) error
+	FindByAccountID(ctx context.Context, account *model.Account, accountID string) error
 }
