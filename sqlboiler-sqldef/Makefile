@@ -45,10 +45,10 @@ DB_ENV := DB_PORT=$(DB_PORT) DB_USER=$(DB_USER) DB_PASS=$(DB_PASS)
 DB_DOCKER_COMPOSE := $(DB_ENV) docker-compose
 DB_CLI := psql -U $(DB_USER)
 DB_WAIT_FOR := wait-for --port=$(DB_PORT) --user=$(DB_USER) --password=$(DB_PASS) --seconds=3 --maxAttempts=10
-ifndef DB_PGSQLMODE
-DB_PGSQLMODE := disable
+ifndef DB_PGSSLMODE
+DB_PGSSLMODE := disable
 endif
-SQLDEF := PGSSLMODE=$(DB_PGSQLMODE) psqldef --port=$(DB_PORT) --user=$(DB_USER) --password=$(DB_PASS)
+SQLDEF := PGSSLMODE=$(DB_PGSSLMODE) psqldef --port=$(DB_PORT) --user=$(DB_USER) --password=$(DB_PASS)
 SQLDEF_SCHEMA_FILE := ./postgres/schema.sql
 SQLDEF_DRYRUN_FILE := ./postgres/tmp/dryrun.sql
 
