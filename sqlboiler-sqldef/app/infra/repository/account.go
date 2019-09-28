@@ -4,6 +4,9 @@ import (
 	"context"
 	"database/sql"
 
+	"github.com/kei2100/playground-go-sql/sqlboiler-sqldef/app/domain/repository"
+	"golang.org/x/xerrors"
+
 	"github.com/kei2100/playground-go-sql/sqlboiler-sqldef/app/domain/model"
 	"github.com/kei2100/playground-go-sql/sqlboiler-sqldef/app/infra/db/entity"
 )
@@ -13,15 +16,16 @@ type Account struct {
 	db *sql.DB
 }
 
+// FindByAccountID finds account by accountID
 func (repo *Account) FindByAccountID(ctx context.Context, account *model.Account, accountID string) error {
 	ent, err := entity.Accounts(
 		entity.AccountWhere.AccountID.EQ(accountID),
 	).One(ctx, repo.db)
 	if err != nil {
-		if isSQLErrNoRows(err) {
-			return errNotFound(err)
+		if xerrors.Is(err, sql.ErrNoRows) {
+			return xerrors.Errorf("repository: failed to find by %s: %w", accountID, repository.ErrNotFound)
 		}
-		return err
+		return xerrors.Errorf("repository: failed to find by %s: %w", accountID, err)
 	}
 	mapAccount(ent, account)
 	return nil
