@@ -1,0 +1,20 @@
+version: '3'
+services:
+
+  ridgepole:
+    build:
+      context: ./
+      dockerfile: Dockerfile-ridgepole
+    volumes:
+    - ./ridgepole:/ridgepole
+
+  postgres:
+    image: postgres:10-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASS:-postgres}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data
+    ports:
+      - ${DB_PORT:-25432}:5432

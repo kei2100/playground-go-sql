@@ -1,0 +1,41 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+create_table "accounts", id: :string, limit: 36, force: :cascade do |t|
+  t.string "account_id", limit: 36, null: false
+  t.datetime "created_at", null: false
+  t.datetime "updated_at", null: false
+  t.index ["account_id"], name: "accounts_idx_account_id", unique: true
+end
+
+create_table "comments", id: :string, limit: 36, force: :cascade do |t|
+  t.string "post_id", limit: 36, null: false
+  t.string "author_id", limit: 36, null: false
+  t.text "body", null: false
+  t.datetime "created_at", null: false
+  t.datetime "updated_at", null: false
+  t.index ["author_id"], name: "comments_idx_author_id"
+  t.index ["post_id"], name: "comments_idx_post_id"
+end
+
+create_table "posts", id: :string, limit: 36, force: :cascade do |t|
+  t.string "author_id", limit: 36, null: false
+  t.text "body", null: false
+  t.datetime "created_at", null: false
+  t.datetime "updated_at", null: false
+  t.datetime "posted_at", :timestamptz, null: false
+  t.index ["author_id"], name: "posts_idx_author_id"
+end
+
+create_table "relationships", id: :string, limit: 36, force: :cascade do |t|
+  t.string "follower_id", limit: 36, null: false
+  t.string "followee_id", limit: 36, null: false
+  t.datetime "created_at", null: false
+  t.datetime "updated_at", null: false
+  t.index ["follower_id", "followee_id"], name: "relationships_idx_follower_followee_ids", unique: true
+end
+
+add_foreign_key "comments", "accounts", column: "author_id", name: "comments_fk_author_id"
+add_foreign_key "comments", "posts", name: "comments_fk_posts_id"
+add_foreign_key "posts", "accounts", column: "author_id", name: "posts_fk_author_id"
+add_foreign_key "relationships", "accounts", column: "followee_id", name: "relationships_fk_followee_id"
+add_foreign_key "relationships", "accounts", column: "follower_id", name: "relationships_fk_follower_id"
