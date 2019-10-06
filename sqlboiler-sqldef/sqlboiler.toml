@@ -5,3 +5,19 @@ dbname = "develop"
 user = "postgres"
 pass = "postgres"
 sslmode = "disable"
+
+[[types]]
+  [types.match]
+    type = "time.Time"
+    nullable = false
+    db_type = "date"
+  [types.replace]
+    type = "string"
+
+[[types]]
+  [types.match]
+    type = "null.Time"
+    nullable = true
+    db_type = "date"
+  [types.replace]
+    type = "null.String"

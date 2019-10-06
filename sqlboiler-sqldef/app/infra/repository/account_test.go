@@ -15,7 +15,7 @@ func TestAccount_FindByAccountID(t *testing.T) {
 
 	fixture(t,
 		entity.Account{ID: "test1", AccountID: "exist1"},
-		entity.Account{ID: "test2", AccountID: "exist2"},
+		entity.Account{ID: "test2", AccountID: "exist2", BirthDate: "1970-01-01"},
 	)
 
 	repo := Account{db: db}
@@ -29,6 +29,9 @@ func TestAccount_FindByAccountID(t *testing.T) {
 	}
 	if g, w := got.AccountID, "exist1"; g != w {
 		t.Errorf("AccountID got %v, want %v", g, w)
+	}
+	if g, w := got.BirthDate, ""; g != w {
+		t.Errorf("BirthDate got %v, want %v", g, w)
 	}
 
 	err := repo.FindByAccountID(ctx, &got, "not found")

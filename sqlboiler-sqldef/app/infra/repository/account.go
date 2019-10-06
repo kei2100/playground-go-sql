@@ -4,12 +4,13 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/kei2100/playground-go-sql/sqlboiler-sqldef/app/domain/repository"
-	"golang.org/x/xerrors"
-
 	"github.com/kei2100/playground-go-sql/sqlboiler-sqldef/app/domain/model"
+	"github.com/kei2100/playground-go-sql/sqlboiler-sqldef/app/domain/repository"
 	"github.com/kei2100/playground-go-sql/sqlboiler-sqldef/app/infra/db/entity"
+	"golang.org/x/xerrors"
 )
+
+const dateDefault = "-infinity"
 
 // Account repository implementation
 type Account struct {
@@ -34,6 +35,9 @@ func (repo *Account) FindByAccountID(ctx context.Context, account *model.Account
 func mapAccount(e *entity.Account, m *model.Account) {
 	m.ID = e.ID
 	m.AccountID = e.AccountID
+	if e.BirthDate != dateDefault {
+		m.BirthDate = e.BirthDate
+	}
 	m.CreatedAt = e.CreatedAt
 	m.UpdatedAt = e.UpdatedAt
 }

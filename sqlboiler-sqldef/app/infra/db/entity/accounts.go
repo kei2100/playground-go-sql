@@ -27,6 +27,7 @@ type Account struct {
 	AccountID string    `boil:"account_id" json:"account_id" toml:"account_id" yaml:"account_id"`
 	CreatedAt time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	UpdatedAt time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
+	BirthDate string    `boil:"birth_date" json:"birth_date" toml:"birth_date" yaml:"birth_date"`
 
 	R *accountR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L accountL  `boil:"-" json:"-" toml:"-" yaml:"-"`
@@ -37,11 +38,13 @@ var AccountColumns = struct {
 	AccountID string
 	CreatedAt string
 	UpdatedAt string
+	BirthDate string
 }{
 	ID:        "id",
 	AccountID: "account_id",
 	CreatedAt: "created_at",
 	UpdatedAt: "updated_at",
+	BirthDate: "birth_date",
 }
 
 // Generated where
@@ -88,11 +91,13 @@ var AccountWhere = struct {
 	AccountID whereHelperstring
 	CreatedAt whereHelpertime_Time
 	UpdatedAt whereHelpertime_Time
+	BirthDate whereHelperstring
 }{
 	ID:        whereHelperstring{field: "\"accounts\".\"id\""},
 	AccountID: whereHelperstring{field: "\"accounts\".\"account_id\""},
 	CreatedAt: whereHelpertime_Time{field: "\"accounts\".\"created_at\""},
 	UpdatedAt: whereHelpertime_Time{field: "\"accounts\".\"updated_at\""},
+	BirthDate: whereHelperstring{field: "\"accounts\".\"birth_date\""},
 }
 
 // AccountRels is where relationship names are stored.
@@ -125,9 +130,9 @@ func (*accountR) NewStruct() *accountR {
 type accountL struct{}
 
 var (
-	accountAllColumns            = []string{"id", "account_id", "created_at", "updated_at"}
+	accountAllColumns            = []string{"id", "account_id", "created_at", "updated_at", "birth_date"}
 	accountColumnsWithoutDefault = []string{"id", "account_id", "created_at", "updated_at"}
-	accountColumnsWithDefault    = []string{}
+	accountColumnsWithDefault    = []string{"birth_date"}
 	accountPrimaryKeyColumns     = []string{"id"}
 )
 
