@@ -45,14 +45,14 @@ db.restart: db.stop db.start
 
 .PHONY: db.schema.export
 db.schema.export: db.start
-	docker-compose run --rm ridgepole -c $(DB_URL) --export -o Schemafile
+	$(IGNORE)docker-compose run --rm ridgepole -c $(DB_URL) --export -o Schemafile
 
 .PHONY: db.schema.migrate.dryrun
 db.schema.migrate.dryrun: db.start
 	docker-compose run --rm ridgepole -c $(DB_URL) --apply --dry-run
 
 .PHONY: db.schema.migrate
-db.schema.migrate.dryrun: db.start
+db.schema.migrate: db.start
 	docker-compose run --rm ridgepole -c $(DB_URL) --apply
 
 .PHONY: db.console

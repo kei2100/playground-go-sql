@@ -1,41 +1,80 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+
+def current_definition
+  if @current_definition
+    return @current_definition
+  end
+  dump = Ridgepole::Dumper.new.dump
+  definition, _ = Ridgepole::DSLParser.new.parse(dump, {})
+  @current_definition =definition
+end
+
+puts "debug current_definition ============="
+pp current_definition
+puts "============="
+#{"accounts"=>
+#  {:indices=>
+#    {"accounts_idx_account_id"=>
+#      {:column_name=>["account_id"],
+#        :options=>{:name=>"accounts_idx_account_id", :unique=>true}}},
+#    :definition=>
+#      {"account_id"=>{:type=>:string, :options=>{:limit=>36, :null=>false}},
+#        "created_at"=>{:type=>:datetime, :options=>{:null=>false}},
+#        "updated_at"=>{:type=>:datetime, :options=>{:null=>false}}},
+#    :options=>{:id=>:string, :limit=>36}}}
+
+def timestamp_with_tz(t, column, opts = {})
+  table = t.instance_variable_get(:@table_name)
+  t.column column, "timestamp with time zone", opts.merge!(ignore: true)
+  execute("ALTER TABLE #{table} ADD COLUMN IF NOT EXISTS \"#{column}\" timestamp with time zone NOT NULL") do # TODO not null
+    current_definition.dig(table, :definition, column, :type) != :datetime
+  end
+end
+
+def timestamps_with_tz(t)
+  timestamp_with_tz(t, "created_at", null: false)
+  timestamp_with_tz(t, "updated_at", null: false)
+end
+
+
 create_table "accounts", id: :string, limit: 36, force: :cascade do |t|
   t.string "account_id", limit: 36, null: false
-  t.datetime "created_at", null: false
-  t.datetime "updated_at", null: false
+  timestamps_with_tz t
+  timestamp_with_tz t, "tested_at", null: false
   t.index ["account_id"], name: "accounts_idx_account_id", unique: true
 end
 
-create_table "comments", id: :string, limit: 36, force: :cascade do |t|
-  t.string "post_id", limit: 36, null: false
-  t.string "author_id", limit: 36, null: false
-  t.text "body", null: false
-  t.datetime "created_at", null: false
-  t.datetime "updated_at", null: false
-  t.index ["author_id"], name: "comments_idx_author_id"
-  t.index ["post_id"], name: "comments_idx_post_id"
-end
+#create_table "comments", id: :string, limit: 36, force: :cascade do |t|
+#  t.string "post_id", limit: 36, null: false
+#  t.string "author_id", limit: 36, null: false
+#  t.text "body", null: false
+#  t.datetime "created_at", null: false
+#  t.datetime "updated_at", null: false
+#  t.index ["author_id"], name: "comments_idx_author_id"
+#  t.index ["post_id"], name: "comments_idx_post_id"
+#end
+#
+#create_table "posts", id: :string, limit: 36, force: :cascade do |t|
+#  t.string "author_id", limit: 36, null: false
+#  t.text "body", null: false
+#  t.datetime "created_at", null: false
+#  t.datetime "updated_at", null: false
+#  t.timestamptz "posted_at", null: false, ignore: true
+#  t.index ["author_id"], name: "posts_idx_author_id"
+#end
+#execute('ALTER TABLE "posts" ADD COLUMN IF NOT EXISTS "posted_at" timestamp with time zone')
 
-create_table "posts", id: :string, limit: 36, force: :cascade do |t|
-  t.string "author_id", limit: 36, null: false
-  t.text "body", null: false
-  t.datetime "created_at", null: false
-  t.datetime "updated_at", null: false
-  t.datetime "posted_at", :timestamptz, null: false
-  t.index ["author_id"], name: "posts_idx_author_id"
-end
-
-create_table "relationships", id: :string, limit: 36, force: :cascade do |t|
-  t.string "follower_id", limit: 36, null: false
-  t.string "followee_id", limit: 36, null: false
-  t.datetime "created_at", null: false
-  t.datetime "updated_at", null: false
-  t.index ["follower_id", "followee_id"], name: "relationships_idx_follower_followee_ids", unique: true
-end
-
-add_foreign_key "comments", "accounts", column: "author_id", name: "comments_fk_author_id"
-add_foreign_key "comments", "posts", name: "comments_fk_posts_id"
-add_foreign_key "posts", "accounts", column: "author_id", name: "posts_fk_author_id"
-add_foreign_key "relationships", "accounts", column: "followee_id", name: "relationships_fk_followee_id"
-add_foreign_key "relationships", "accounts", column: "follower_id", name: "relationships_fk_follower_id"
+#create_table "relationships", id: :string, limit: 36, force: :cascade do |t|
+#  t.string "follower_id", limit: 36, null: false
+#  t.string "followee_id", limit: 36, null: false
+#  t.datetime "created_at", null: false
+#  t.datetime "updated_at", null: false
+#  t.index ["follower_id", "followee_id"], name: "relationships_idx_follower_followee_ids", unique: true
+#end
+#
+#add_foreign_key "comments", "accounts", column: "author_id", name: "comments_fk_author_id"
+#add_foreign_key "comments", "posts", name: "comments_fk_posts_id"
+#add_foreign_key "posts", "accounts", column: "author_id", name: "posts_fk_author_id"
+#add_foreign_key "relationships", "accounts", column: "followee_id", name: "relationships_fk_followee_id"
+#add_foreign_key "relationships", "accounts", column: "follower_id", name: "relationships_fk_follower_id"
