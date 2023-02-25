@@ -10,8 +10,8 @@ require (
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/viper v1.4.0
 	github.com/volatiletech/inflect v0.0.0-20170731032912-e7201282ae8d // indirect
-	github.com/volatiletech/null v8.0.0+incompatible
+	github.com/volatiletech/null v8.0.0+incompatible // indirect
 	github.com/volatiletech/sqlboiler v3.5.0+incompatible
-	golang.org/x/sys v0.0.0-20190927073244-c990c680b611 // indirect
+	golang.org/x/sys v0.1.0 // indirect
 	golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7
 )
